@@ -85,7 +85,7 @@ legend('Cell 1','Cell 2','Cell 3',...
 % ax_CT.XGrid = 'on';
 % ax_CT.XLabel.String = 'Time [s]';
 % yyaxis left
-% ax_CT.YLabel.String = 'Cell temperature [°C]';
+% ax_CT.YLabel.String = 'Cell temperature [?C]';
 % ax_CT.YColor = 'blue';
 % yyaxis right
 % ax_CT.YLabel.String = 'Battery current [A]';
@@ -118,7 +118,7 @@ ax_BMST.YGrid = 'on';
 ax_BMST.XGrid = 'on';
 ax_BMST.XLabel.String = 'Time [s]';
 yyaxis left
-ax_BMST.YLabel.String = 'BMS temperature [°C]';
+ax_BMST.YLabel.String = 'BMS temperature [?C]';
 ax_BMST.YColor = 'blue';
 yyaxis right
 ax_BMST.YLabel.String = 'Battery current [A]';
@@ -228,6 +228,9 @@ function T1_Trig_Fcn(~, ~, hAnimLinesCV,...
     test_info.prev_bal_time = toc - test_info.start_bal_time;
 % Disable all balancing mosfets (it's mandatory to accurately measure the
 % cell voltages)
+
+    test_info.t1(1,t_idx) = toc;
+
     test_info.BMSino.setBalancingStatus([0 0 0 0 0 0]);
     
 % Measure cell temperatures
@@ -346,6 +349,7 @@ function T1_Trig_Fcn(~, ~, hAnimLinesCV,...
         
         %record initial balancing time for next iteration
         test_info.start_bal_time = toc;
+        test_info.t2(1,t_idx) = toc;
         
        % fprintf('STATE 2 %f \n', toc)
     %% STATE 3
@@ -390,7 +394,8 @@ function T1_Trig_Fcn(~, ~, hAnimLinesCV,...
     %     %fprintf('STATE 4 %f\n', toc)
         test_info.start_current_time = toc;                                %update initial time with this current value
         test_info.start_current_SetPoint = ChSetPoint;                    %update initial current value
-    
+        
+        test_info.t3(1,t_idx) = toc;
     
     %% STATE 6
     %  Calculate charge stored in previous iteration
@@ -534,6 +539,12 @@ function T1_Trig_Fcn(~, ~, hAnimLinesCV,...
     % Update axes
     drawnow limitrate
     
+    test_info.t4(1,t_idx) = toc;
+    test_info.deltat2 = test_info.t2(1, t_idx) - test_info.t1(1,t_idx);
+    test_info.deltat3 = test_info.t3(1, t_idx) - test_info.t2(1,t_idx);
+    test_info.deltat4 = test_info.t4(1,t_idx) - test_info.t3(1,t_idx);
+
+    
     %fprintf('STATE 6 %f\n', toc)
 end
 %% Timer Error
@@ -568,7 +579,11 @@ function T1_Stop_Fcn(~, ~, ~)
         test_info.CellVoltage_filtered;...
         test_info.BatteryVoltage;...
         test_info.CellBalancingStatus;...
-        test_info.BMSTemperature]);
+        test_info.BMSTemperature;...
+        test_info.t1;...
+        test_info.t2;...
+        test_info.t3;...
+        test_info.t4;...
+        ]);
     
 end
-
