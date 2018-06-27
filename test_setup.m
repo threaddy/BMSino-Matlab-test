@@ -3,8 +3,8 @@ classdef test_setup < handle % handle class
     %   ...
     
     properties( Constant = true )
-        DCDC_SERIALPORT = 'COM2'    % COM port 
-        BMSINO_SERIALPORT = 'COM5'  % COM port 
+        DCDC_SERIALPORT = 'COM4'    % COM port 
+        BMSINO_SERIALPORT = 'COM6'  % COM port 
         BMSINO_BAUDRATE = 115200    % bps
         DCDC_BAUDRATE = 38400       % bps
         MAX_TEST_TIME = 14400;      % seconds
@@ -37,6 +37,15 @@ classdef test_setup < handle % handle class
         start_bal_time = 0;
         prev_bal_time = 0;
         
+        t1 = NaN * ones(1, test_setup.MAX_TEST_TIME);
+        t2 = NaN * ones(1, test_setup.MAX_TEST_TIME);
+        t3 = NaN * ones(1, test_setup.MAX_TEST_TIME);
+        t4 = NaN * ones(1, test_setup.MAX_TEST_TIME);
+       
+        deltat2 = NaN * ones(1, test_setup.MAX_TEST_TIME);
+        deltat3 = NaN * ones(1, test_setup.MAX_TEST_TIME);
+        deltat4 = NaN * ones(1, test_setup.MAX_TEST_TIME);
+        
     end
     
     methods
@@ -55,4 +64,3 @@ classdef test_setup < handle % handle class
         end
     end
 end
-
